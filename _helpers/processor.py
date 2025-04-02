@@ -1,7 +1,7 @@
-import serial
 import sys
 import time
 
+import serial
 from _helpers.logger import Logger
 
 
@@ -48,7 +48,7 @@ class BumpBarProcessor:
             self.logger.info("Closing serial communication...")
             if 's' in locals():
                 s.close()
-        
+
     def _responder(self, rx_line):
         rx_hex = rx_line.hex().upper()
         self.logger.debug(f"Button pressed: {rx_hex}")
