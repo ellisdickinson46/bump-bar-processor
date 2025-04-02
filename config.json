@@ -1,0 +1,22 @@
+{
+    "button_commands": {
+        "button_a1": null,
+        "button_a2": null,
+        "button_b1": null,
+        "button_b2": null,
+        "button_c1": null,
+        "button_c2": null,
+        "button_d1": null,
+        "button_d2": null,
+        "button_e1": null,
+        "button_e2": null
+    },
+    "connection": {
+        "baud": 1200,
+        "port_name": "/dev/tty.PL2303G-USBtoUART140"
+    },
+    "feature_flags": {
+        "enable_repeat_presses": false,
+        "enable_auto_reconnect": true
+    }
+}
