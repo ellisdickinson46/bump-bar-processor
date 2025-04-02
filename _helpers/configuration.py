@@ -1,5 +1,6 @@
 from argparse import Namespace
 import glob
+import json
 import sys
 
 import serial
@@ -23,7 +24,7 @@ class CommandParser:
             self.logger.error('Command not found', e)
 
     def _config_from_args(self):
-        self.logger.info("Launching configuration from command line...")
+        self.logger.info("Launching with configuration from command line...")
         return {
             "type": "launch",
             "parameters": {
@@ -35,14 +36,17 @@ class CommandParser:
         }
 
     def _config_from_file(self):
-        self.logger.info("Launching configuration from configuration file...")
+        self.logger.info("Launching with configuration from a configuration file...")
+        with open(self.parameters.config_file, mode='r', encoding='utf-8') as json_file:
+            data = json.load(json_file)
+
         return {
             "type": "launch",
             "parameters": {
-                "baud": self.parameters.baud,
-                "port": self.parameters.port,
-                "auto_reconnect": self.parameters.a,
-                "repeat_presses": self.parameters.r
+                "baud": data["connection"]["baud"],
+                "port": data["connection"]["port"],
+                "auto_reconnect": data["feature_flags"]["enable_auto_reconnect"],
+                "repeat_presses": data["feature_flags"]["enable_repeat_presses"]
             }
         }
 
