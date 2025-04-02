@@ -1,10 +1,10 @@
 from argparse import Namespace
 import glob
-import json
 import sys
 
 import serial
 from _helpers.logger import Logger
+from _helpers.data import JSONHandler
 
 
 class CommandParser:
@@ -19,7 +19,8 @@ class CommandParser:
             "list-ports": self.list_ports
         }
         try:
-            self.cmd_result = commands[self.parameters.command]()
+            if (cmd_result := commands[self.parameters.command]()) is not None:
+                self.cmd_result = cmd_result
         except KeyError as e:
             self.logger.error('Command not found', e)
 
@@ -37,16 +38,19 @@ class CommandParser:
 
     def _config_from_file(self):
         self.logger.info("Launching with configuration from a configuration file...")
-        with open(self.parameters.config_file, mode='r', encoding='utf-8') as json_file:
-            data = json.load(json_file)
+        try:
+            config = JSONHandler(self.parameters.config_file)
+        except Exception as e:
+            self.logger.error(e)
+            return
 
         return {
             "type": "launch",
             "parameters": {
-                "baud": data["connection"]["baud"],
-                "port": data["connection"]["port"],
-                "auto_reconnect": data["feature_flags"]["enable_auto_reconnect"],
-                "repeat_presses": data["feature_flags"]["enable_repeat_presses"]
+                "baud": config.get("connection.baud"),
+                "port": config.get("connection.port"),
+                "auto_reconnect": config.get("feature_flags.enable_auto_reconnect"),
+                "repeat_presses": config.get("feature_flags.enable_repeat_presses")
             }
         }
 
@@ -55,6 +59,8 @@ class CommandParser:
 
             :raises EnvironmentError:
                 On unsupported or unknown platforms
+            :raises OSError:
+                If a serial port cannot be opened (handled internally)
             :returns:
                 A list of the serial ports available on the system
         """
@@ -74,7 +80,7 @@ class CommandParser:
                 port = serial.Serial(port_name)     # Try to open a port
                 port.close()                        # Close the port if sucessful
                 viable_ports.append(port_name)      # Add to list of good ports
-            except OSError:              # If unsuccessful
+            except OSError:                         # If unsuccessful
                 pass
         return {
             "type": "output",
