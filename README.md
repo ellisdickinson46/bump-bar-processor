@@ -77,13 +77,4 @@ python main.py hw-test -b 9600 -p COM3 -a -r
 
 ## 🔌 Plugin System
 
-Plugins are Python scripts with a `run(logger, **kwargs)` function.
-
-### Example: `plugins/platform_command.py`
-
-```python
-def run(logger, **kwargs):
-    command = kwargs.get("command")
-    logger.info(f"Running: {command}")
-    subprocess.run(command, shell=True)
-```
+Look at [PLUGINS.md](PLUGINS.md) for a list of plugins and example usage.
