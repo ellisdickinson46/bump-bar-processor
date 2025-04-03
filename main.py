@@ -13,10 +13,10 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(dest="command", )
     subparsers.required = True
 
-    # 'run' command
+    # 'hw-test' command
     run_parser = subparsers.add_parser(
-        'run',
-        help='run the processor',
+        'hw-test',
+        help='run in hardware test mode',
         usage="%(prog)s [-h] -b BAUD -p PORT [-a] [-r]"
     )
     run_parser.add_argument("-b", "--baud", type=int, default=1200, help="set baud rate (defaults to 1200)")
@@ -24,10 +24,10 @@ if __name__ == "__main__":
     run_parser.add_argument("-a", action='store_true', help="enable auto-reconnect on disconnection")
     run_parser.add_argument("-r", action='store_true', help="enable repeat presses")
 
-    # 'run-config' command
+    # 'run' command
     from_conf_parser = subparsers.add_parser(
-        'run-config',
-        help='run the processor from a configuration file',
+        'run',
+        help='run the processor from a pre-defined configuration',
         usage="%(prog)s CONFIG_FILE"
     )
     from_conf_parser.add_argument('config_file', help='path to configuration file')
@@ -45,6 +45,10 @@ if __name__ == "__main__":
         case "output":
             print(conf.cmd_result.get("return", None))
         case "launch":
-            processor = BumpBarProcessor(logger, conf.cmd_result.get("parameters", {}))
+            processor = BumpBarProcessor(
+                logger,
+                conf.cmd_result.get("parameters"),
+                conf.cmd_result.get("commands")
+            )
         case _:
             logger.error("Unknown response type received from command parser")
