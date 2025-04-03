@@ -7,7 +7,13 @@
         "c1": null,
         "c2": null,
         "d1": null,
-        "d2": null,
+        "d2": {
+            "plugin": "plugins.web_request",
+            "kwargs": {
+                "method": "post",
+                "url": "https://webhook-url"
+            }
+        },
         "e1": {
             "plugin": "plugins.platform_command",
             "kwargs": {
@@ -20,7 +26,7 @@
     },
     "connection": {
         "baud": 1200,
-        "port": "/dev/tty.PL2303G-USBtoUART130"
+        "port": "/dev/tty.PL2303G-USBtoUART1130"
     },
     "feature_flags": {
         "enable_repeat_presses": true,
