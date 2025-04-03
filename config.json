@@ -1,22 +1,29 @@
 {
-    "button_commands": {
-        "button_a1": null,
-        "button_a2": null,
-        "button_b1": null,
-        "button_b2": null,
-        "button_c1": null,
-        "button_c2": null,
-        "button_d1": null,
-        "button_d2": null,
-        "button_e1": null,
-        "button_e2": null
+    "commands": {
+        "a1": null,
+        "a2": null,
+        "b1": null,
+        "b2": null,
+        "c1": null,
+        "c2": null,
+        "d1": null,
+        "d2": null,
+        "e1": {
+            "plugin": "plugins.platform_command",
+            "kwargs": {
+                "command": "echo 'Hello from Terminal'"
+            }
+        },
+        "e2": {
+            "plugin": "plugins.hello_world"
+        }
     },
     "connection": {
         "baud": 1200,
-        "port_name": "/dev/tty.PL2303G-USBtoUART140"
+        "port": "/dev/tty.PL2303G-USBtoUART130"
     },
     "feature_flags": {
-        "enable_repeat_presses": false,
-        "enable_auto_reconnect": true
+        "enable_repeat_presses": true,
+        "enable_auto_reconnect": false
     }
 }
