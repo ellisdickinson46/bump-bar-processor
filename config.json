@@ -1,0 +1,29 @@
+{
+    "commands": {
+        "a1": null,
+        "a2": null,
+        "b1": null,
+        "b2": null,
+        "c1": null,
+        "c2": null,
+        "d1": null,
+        "d2": null,
+        "e1": {
+            "plugin": "plugins.platform_command",
+            "kwargs": {
+                "command": "echo 'Hello from Terminal'"
+            }
+        },
+        "e2": {
+            "plugin": "plugins.hello_world"
+        }
+    },
+    "connection": {
+        "baud": 1200,
+        "port": "/dev/tty.PL2303G-USBtoUART130"
+    },
+    "feature_flags": {
+        "enable_repeat_presses": true,
+        "enable_auto_reconnect": false
+    }
+}

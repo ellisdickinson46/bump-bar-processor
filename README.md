@@ -1,36 +1,89 @@
 # Bump Bar Processor
 
-A small bump bar script to connect and interpret inputs from Serial Bump Bars.
+A modular Python tool for listening to serial input from Bump Bars  
+_Tested with: Panasonic JS140MS, TG3 KBA-FP10A_
 
-Tested with Panasonic and TG3 10-key Bump Bars  
 
-## Configuration
-Configuration is done through a single YAML file. Some values are platform dependent and use the native operating system interpreter.
+## 📦 Features
 
-A sample file is available.
-### <code>connection</code> Keys
-| Key       | Description              | Example Value                 | Type   |
-|-----------|--------------------------|-------------------------------|--------|
-| baud      | Serial Baud Rate         | 1200                          | String |
-| port_name | Serial Port Name or Path | /dev/tty.PL2303G-USBtoUART140 | String |
+- ✅ Serial port listener with auto-reconnect
+- 🔌 Plugin-based command execution
+- ⚙️ JSON-based configuration
+- 🧪 Hardware test mode
+- 📜 Cross-platform serial port detection
 
-### <code>button_commands</code> Keys
-| Key       | Description                                      | Example Value | Type             |
-|-----------|--------------------------------------------------|---------------|------------------|
-| button_a2 | Command to execute (using native OS interpreter) | null          | String or _null_ |
-| button_a1 | Command to execute (using native OS interpreter) | null          | String or _null_ |
-| button_b1 | Command to execute (using native OS interpreter) | null          | String or _null_ |
-| button_b2 | Command to execute (using native OS interpreter) | null          | String or _null_ |
-| button_c1 | Command to execute (using native OS interpreter) | null          | String or _null_ |
-| button_c2 | Command to execute (using native OS interpreter) | null          | String or _null_ |
-| button_d1 | Command to execute (using native OS interpreter) | null          | String or _null_ |
-| button_d2 | Command to execute (using native OS interpreter) | null          | String or _null_ |
-| button_e1 | Command to execute (using native OS interpreter) | null          | String or _null_ |
-| button_e2 | Command to execute (using native OS interpreter) | null          | String or _null_ |
+## 🚀 Getting Started
 
-### General Keys
-| Key            | Description                                                     | Example Value | Type    |
-|----------------|-----------------------------------------------------------------|---------------|---------|
-| repeat_presses | Enable holding buttons for repeat actions                       | <true\|false> | Boolean |
-| auto_reconnect | Enable reconnect attempts when bump bar connection is lost      | <true\|false> | Boolean |
-| max_reconnects | Number of times to attempt reconnecting (use zero for infinite) | 0             | Integer |
+### 1. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Prepare configuration
+
+Example `config.json`:
+
+```json
+{
+  "commands": {
+    "e1": {
+      "plugin": "plugins.platform_command",
+      "kwargs": {
+        "command": "echo 'Hello from Terminal'"
+      }
+    },
+    "e2": {
+      "plugin": "plugins.hello_world"
+    }
+  },
+  "connection": {
+    "baud": 1200,
+    "port": "/dev/tty.PL2303G-USBtoUART130"
+  },
+  "feature_flags": {
+    "enable_repeat_presses": true,
+    "enable_auto_reconnect": false
+  }
+}
+```
+
+---
+
+## 📚 Usage
+
+### List available serial ports
+
+```bash
+python main.py list-ports
+```
+
+### Run with config file
+
+```bash
+python main.py run config.json
+```
+
+### Hardware test mode (manual arguments)
+
+```bash
+python main.py hw-test -b 9600 -p COM3 -a -r
+```
+
+> `-b`: Set Baud Rate (defaults to 1200)  
+> `-p`: Set Port Name/Path  
+> `-a`: Enable auto-reconnect  
+> `-r`: Enable repeat key presses  
+
+## 🔌 Plugin System
+
+Plugins are Python scripts with a `run(logger, **kwargs)` function.
+
+### Example: `plugins/platform_command.py`
+
+```python
+def run(logger, **kwargs):
+    command = kwargs.get("command")
+    logger.info(f"Running: {command}")
+    subprocess.run(command, shell=True)
+```
