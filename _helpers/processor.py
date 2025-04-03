@@ -1,3 +1,4 @@
+import importlib
 import sys
 import time
 
@@ -6,9 +7,11 @@ from _helpers.logger import Logger
 
 
 class BumpBarProcessor:
-    def __init__(self, logger_instance: Logger, parameters: dict):
+    def __init__(self, logger_instance: Logger, parameters: dict, commands: dict):
         self.parameters = parameters
         self.logger = logger_instance
+        self.commands = commands
+
         self._communicate()
 
     def _communicate(self):
@@ -35,7 +38,7 @@ class BumpBarProcessor:
                             s.setDTR(True)
                     except Exception as e:
                         print(e)
-        
+
         except serial.SerialException as e:
             self.logger.error("Failed to open serial communication!")
             self.logger.debug(e)
@@ -50,5 +53,25 @@ class BumpBarProcessor:
                 s.close()
 
     def _responder(self, rx_line):
-        rx_hex = rx_line.hex().upper()
+        rx_hex = rx_line.hex().lower()
         self.logger.debug(f"Button pressed: {rx_hex}")
+        if self.commands is not None:
+            self._exec_action(rx_hex)
+
+    def _exec_action(self, rx_hex):
+        if not (action := self.commands.get(rx_hex)):
+            self.logger.warning(f"No action configured for {rx_hex}")
+            return
+
+        try:
+            if (plugin := action.get("plugin")) is not None:
+                module = importlib.import_module(plugin)
+                if hasattr(module, "run"):
+                    module.run(self.logger, **action.get("kwargs", {}))
+                else:
+                    self.logger.error(f"'run' function not found in plugin: {plugin}")
+            else:
+                raise KeyError(f"No plugin was defined for action for: {rx_hex}")
+        except Exception as e:
+            self.logger.error(f"Failed to execute plugin for: {rx_hex}")
+            self.logger.debug(str(e))

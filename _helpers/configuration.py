@@ -14,8 +14,8 @@ class CommandParser:
         self.cmd_result = {}
 
         commands = {
-            "run": self._config_from_args,
-            "run-config": self._config_from_file,
+            "hw-test": self._config_from_args,
+            "run": self._config_from_file,
             "list-ports": self.list_ports
         }
         try:
@@ -33,7 +33,8 @@ class CommandParser:
                 "port": self.parameters.port,
                 "auto_reconnect": self.parameters.a,
                 "repeat_presses": self.parameters.r
-            }
+            },
+            "commands": None
         }
 
     def _config_from_file(self):
@@ -51,7 +52,8 @@ class CommandParser:
                 "port": config.get("connection.port"),
                 "auto_reconnect": config.get("feature_flags.enable_auto_reconnect"),
                 "repeat_presses": config.get("feature_flags.enable_repeat_presses")
-            }
+            },
+            "commands": config.get("commands")
         }
 
     def list_ports(self):
