@@ -26,6 +26,7 @@ class BumpBarProcessor:
                 timeout=1
             )
             s.setDTR(True)
+            s.setRTS(False)
             while s.is_open:
                 if s.in_waiting > 0:
                     try:
